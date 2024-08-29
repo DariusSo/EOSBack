@@ -8,13 +8,28 @@ public class Email {
     private String type;
     private LocalDateTime date;
     private boolean isSent;
+    private String error;
 
-    public Email(int id, String userEmail, String type, LocalDateTime date, boolean isSent) {
+    public Email(int id, String userEmail, String type, LocalDateTime date, boolean isSent, String error) {
         this.id = id;
         this.userEmail = userEmail;
         this.type = type;
         this.date = date;
         this.isSent = isSent;
+        this.error = error;
+    }
+    public Email(String userEmail, String type, LocalDateTime date, boolean isSent, String error) {
+        this.userEmail = userEmail;
+        this.type = type;
+        this.date = date;
+        this.isSent = isSent;
+        this.error = error;
+    }
+    public Email(String userEmail, String type, boolean isSent, String error) {
+        this.userEmail = userEmail;
+        this.type = type;
+        this.isSent = isSent;
+        this.error = error;
     }
 
     public Email() {
@@ -58,5 +73,13 @@ public class Email {
 
     public void setSent(boolean sent) {
         isSent = sent;
+    }
+
+    public String getError() {
+        return error;
+    }
+
+    public void setError(String error) {
+        this.error = error;
     }
 }

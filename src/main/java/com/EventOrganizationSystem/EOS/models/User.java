@@ -11,6 +11,9 @@ public class User {
         this.password = password;
     }
 
+    public User() {
+    }
+
     public User(int id, String email) {
         this.id = id;
         this.email = email;

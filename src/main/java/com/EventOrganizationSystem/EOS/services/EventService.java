@@ -15,7 +15,7 @@ public class EventService {
 
 
     EventRepository er = new EventRepository();
-    EmailService es = new EmailService();
+
     ReservationRepository rr = new ReservationRepository();
 
     public void addEvent(Event event) throws SQLException {

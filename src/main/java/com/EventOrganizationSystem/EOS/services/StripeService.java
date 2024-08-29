@@ -1,6 +1,8 @@
 package com.EventOrganizationSystem.EOS.services;
 
 import com.EventOrganizationSystem.EOS.models.Reservation;
+import com.EventOrganizationSystem.EOS.repositories.ReservationRepository;
+import com.EventOrganizationSystem.EOS.utils.JwtDecoder;
 import com.sendgrid.Method;
 import com.sendgrid.Request;
 import com.sendgrid.Response;
@@ -14,6 +16,7 @@ import com.stripe.model.PaymentIntent;
 import com.stripe.model.checkout.Session;
 import com.stripe.param.PaymentIntentCreateParams;
 import com.stripe.param.checkout.SessionCreateParams;
+import io.jsonwebtoken.Claims;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,6 +32,7 @@ public class StripeService {
 
 
     ReservationService rs = new ReservationService();
+    ReservationRepository rr = new ReservationRepository();
 
     @Value("${stripe.api.key}")
     private String stripeApiKey;
@@ -49,14 +53,28 @@ public class StripeService {
         return PaymentIntent.create(params);
     }
 
-    public Session createCheckoutSession(Reservation reservation) throws StripeException, SQLException {
+    public Session createCheckoutSession(String token, int eventId, String code) throws StripeException, SQLException {
+        Claims claims = JwtDecoder.decodeJwt(token);
 
         Stripe.apiKey = "sk_test_51PlEGq2KAAK191iLBzP39TlQrdJc52LgmEg8axaHojCGK5KZbMPylEJWoYiJ0MP3jrwexCzBDwgHVOCwAfWYVEQD00Z6gOC4wD";
-
+        double discount = 0;
         UUID uuid = UUID.randomUUID();
-        BigDecimal amount = rs.addReservation(reservation, uuid);
-        if(amount.equals(BigDecimal.ZERO))
+        double amount = rs.addReservation((Integer) claims.get("UserId"), eventId, uuid);
+        if(amount == 0)
             return new Session();
+        if(code == null){
+            discount = 1;
+        }else{
+            discount = rr.checkDiscount(code);
+        }
+
+        if(discount == 1.00){
+
+        }else{
+
+            amount = amount - (amount * discount);
+        }
+
         SessionCreateParams params = SessionCreateParams.builder()
                 .setMode(SessionCreateParams.Mode.PAYMENT)
                 .setSuccessUrl("http://localhost:8080/redirect?uuid=" + uuid)
@@ -65,9 +83,9 @@ public class StripeService {
                         .setQuantity(1L)
                         .setPriceData(SessionCreateParams.LineItem.PriceData.builder()
                                 .setCurrency("eur")
-                                .setUnitAmount(amount.multiply(BigDecimal.valueOf(100)).longValue())
+                                .setUnitAmount((long) (amount * 100))
                                 .setProductData(SessionCreateParams.LineItem.PriceData.ProductData.builder()
-                                        .setName("eShop order")
+                                        .setName("Event reservation")
                                         .build())
                                 .build())
                         .build())

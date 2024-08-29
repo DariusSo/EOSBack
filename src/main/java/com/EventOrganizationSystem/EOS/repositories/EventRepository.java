@@ -22,7 +22,7 @@ public class EventRepository {
         pr.setString(2, event.getDescription());
         pr.setDouble(3, event.getPrice());
         pr.setString(4, event.getCategory());
-        pr.setString(5, String.valueOf(event.getDateAndTime()));
+        pr.setString(5, String.valueOf(LocalDateTime.now()));
         pr.setString(6, event.getPlace());
         pr.setString(7, event.getImageUrl());
         pr.execute();

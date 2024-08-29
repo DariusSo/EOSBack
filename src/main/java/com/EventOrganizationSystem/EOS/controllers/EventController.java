@@ -13,8 +13,8 @@ import java.util.List;
 @RequestMapping("/api/events")
 public class EventController {
 
-
     EventService es = new EventService();
+
     @CrossOrigin
     @PostMapping("/add")
     public ResponseEntity<String> addEvent(@RequestBody Event event) throws SQLException {

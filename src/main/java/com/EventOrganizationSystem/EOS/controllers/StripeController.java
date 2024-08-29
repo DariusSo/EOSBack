@@ -25,9 +25,10 @@ public class StripeController {
 
     @CrossOrigin
     @PostMapping("/create-checkout-session")
-    public ResponseEntity<Map<String, String>> createCheckoutSession(@RequestBody Reservation reservation) {
+    public ResponseEntity<Map<String, String>> createCheckoutSession(@RequestHeader("Authorization") String token, int eventId,
+                                                                     @RequestParam(value = "code", required = false) String code) {
         try {
-            Session session = sr.createCheckoutSession(reservation);
+            Session session = sr.createCheckoutSession(token, eventId, code);
             Map<String, String> responseData = new HashMap<>();
             responseData.put("id", session.getId());
             return ResponseEntity.ok(responseData);

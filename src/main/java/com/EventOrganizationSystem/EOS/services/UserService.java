@@ -11,4 +11,10 @@ public class UserService {
     public User getUserById(int id) throws SQLException {
         return ur.getUserById(id);
     }
+    public void createUser(User user) throws SQLException {
+        ur.createUser(user);
+    }
+    public int login(User user) throws SQLException {
+        return ur.login(user);
+    }
 }
