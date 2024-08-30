@@ -56,10 +56,12 @@ public class StripeService {
     public Session createCheckoutSession(String token, int eventId, String code) throws StripeException, SQLException {
         Claims claims = JwtDecoder.decodeJwt(token);
 
+        int userId = claims.get("UserId", Integer.class);
+
         Stripe.apiKey = "sk_test_51PlEGq2KAAK191iLBzP39TlQrdJc52LgmEg8axaHojCGK5KZbMPylEJWoYiJ0MP3jrwexCzBDwgHVOCwAfWYVEQD00Z6gOC4wD";
         double discount = 0;
         UUID uuid = UUID.randomUUID();
-        double amount = rs.addReservation((Integer) claims.get("UserId"), eventId, uuid);
+        double amount = rs.addReservation(userId, eventId, uuid);
         if(amount == 0)
             return new Session();
         if(code == null){

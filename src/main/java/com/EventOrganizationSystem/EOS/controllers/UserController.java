@@ -33,7 +33,7 @@ public class UserController {
     public ResponseEntity<String> login(@RequestBody User user) throws SQLException {
         try{
             int userId = us.login(user);
-            if(userId != -1){return ResponseEntity.ok(JwtGenerator.generateJwt(user.getId()));
+            if(userId != -1){return ResponseEntity.ok(JwtGenerator.generateJwt(userId));
             }else{
                 return ResponseEntity.notFound().build();
             }
