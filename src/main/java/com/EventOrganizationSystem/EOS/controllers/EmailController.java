@@ -18,4 +18,10 @@ public class EmailController {
         ems.addNewsletterSubscriber(email);
     }
 
+    @CrossOrigin
+    @PostMapping("/send/newsletter")
+    public void sendNewsLetterEmailToAll(String text) throws SQLException {
+        ems.sendNewsletterEmailToAll(text);
+    }
+
 }

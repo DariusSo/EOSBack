@@ -4,8 +4,11 @@ import com.EventOrganizationSystem.EOS.models.Email;
 import com.EventOrganizationSystem.EOS.utils.Connect;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class EmailRepository {
 
@@ -22,6 +25,15 @@ public class EmailRepository {
         PreparedStatement ps = Connect.SQLConnection("INSERT INTO newsletter (email) VALUES (?)");
         ps.setString(1, email);
         ps.execute();
+    }
+    public List<String> getNewsletterEmails() throws SQLException {
+        List<String> emailList = new ArrayList<>();
+        PreparedStatement ps = Connect.SQLConnection("SELECT * FROM newsletter");
+        ResultSet rs = ps.executeQuery();
+        while(rs.next()){
+            emailList.add(rs.getString("email"));
+        }
+        return emailList;
     }
 
 }
