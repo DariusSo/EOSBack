@@ -5,6 +5,7 @@ import com.EventOrganizationSystem.EOS.models.Reservation;
 import com.EventOrganizationSystem.EOS.services.ReservationService;
 import io.jsonwebtoken.JwtException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,16 +22,13 @@ public class ReservationController {
     @CrossOrigin
     @GetMapping("/byUserId")
     public ResponseEntity<List<Event>> getReservationsListByUserId(@RequestHeader("Authorization") String token) throws SQLException {
-        List<Event> eventList = new ArrayList<>();
         try{
-            eventList = rs.getReservationsListByUserId(token);
+            List<Event> eventList = rs.getReservationsListByUserId(token);
             return ResponseEntity.ok(eventList);
         }catch (SQLException e){
-            e.printStackTrace();
-            return ResponseEntity.internalServerError().body(eventList);
+            return ResponseEntity.internalServerError().body(null);
         }catch (JwtException e){
-            e.printStackTrace();
-            return  ResponseEntity.badRequest().body(eventList);
+            return  new ResponseEntity<List<Event>>(HttpStatus.UNAUTHORIZED);
         }
     }
 

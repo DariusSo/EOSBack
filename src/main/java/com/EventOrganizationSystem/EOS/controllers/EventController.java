@@ -28,7 +28,12 @@ public class EventController {
     @CrossOrigin
     @GetMapping("/get")
     public ResponseEntity<List<Event>> getEvents() throws SQLException {
-           return ResponseEntity.ok(es.getEvents());
+        try{
+            return ResponseEntity.ok(es.getEvents());
+        }catch (SQLException e){
+            return ResponseEntity.internalServerError().body(null);
+        }
+
     }
     @CrossOrigin
     @GetMapping("/getById")
@@ -38,5 +43,27 @@ public class EventController {
         }catch (SQLException e){
             return ResponseEntity.badRequest().body(null);
         }
+    }
+    @CrossOrigin
+    @GetMapping("/getFiltered")
+    public ResponseEntity<List<Event>> getEventsWithFilters(double minPrice, double maxPrice, String minDate, String maxDate, String category) throws SQLException {
+        try{
+            List<Event> eventList = es.getEventsWithFilters(minPrice, maxPrice, minDate, maxDate, category);
+            return ResponseEntity.ok(eventList);
+        }catch (SQLException e){
+            return ResponseEntity.internalServerError().body(null);
+        }
+    }
+
+    @CrossOrigin
+    @GetMapping("/categories")
+    public ResponseEntity<List<String>> getEventCategories() throws SQLException {
+        try{
+            List<String> categoryList = es.getEventCategories();
+            return ResponseEntity.ok(categoryList);
+        }catch (SQLException e){
+            return ResponseEntity.internalServerError().body(null);
+        }
+
     }
 }

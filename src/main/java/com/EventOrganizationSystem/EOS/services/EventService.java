@@ -37,4 +37,11 @@ public class EventService {
         }
 
     }
+    public List<Event> getEventsWithFilters(double minPrice, double maxPrice, String minDate, String maxDate, String category) throws SQLException {
+        return er.getEventsWithFilters(minPrice, maxPrice, minDate, maxDate, category);
+    }
+    public List<String> getEventCategories() throws SQLException {
+        return er.getEventCategories();
+    }
+
 }

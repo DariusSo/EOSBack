@@ -4,6 +4,7 @@ import com.EventOrganizationSystem.EOS.models.User;
 import com.EventOrganizationSystem.EOS.services.UserService;
 import com.EventOrganizationSystem.EOS.utils.JwtGenerator;
 import io.jsonwebtoken.JwtException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,7 +36,7 @@ public class UserController {
             int userId = us.login(user);
             if(userId != -1){return ResponseEntity.ok(JwtGenerator.generateJwt(userId));
             }else{
-                return ResponseEntity.notFound().build();
+                return new ResponseEntity<String>("Wrong email or password", HttpStatus.UNAUTHORIZED);
             }
         }catch (SQLException e){
             return ResponseEntity.internalServerError().body("Server problems");
