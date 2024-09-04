@@ -43,5 +43,8 @@ public class EventService {
     public List<String> getEventCategories() throws SQLException {
         return er.getEventCategories();
     }
+    public List<Event> searchEventByTitle(String text) throws SQLException {
+        return er.searchEventsByTitle(text);
+    }
 
 }

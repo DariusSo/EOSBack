@@ -18,7 +18,7 @@ public class ChatController {
 
     @CrossOrigin
     @GetMapping("/api/ai/generate")
-    public String generate(@RequestParam(value = "message", defaultValue = "tell me a dad joke") String message){
+    public String generate(@RequestParam(value = "message", defaultValue = "hi") String message){
         return chatClient.prompt()
                 .system("You can only generate newsletters, if someone asks anything unrelated tell that you know only how to generate newsletters")
                 .user(message)

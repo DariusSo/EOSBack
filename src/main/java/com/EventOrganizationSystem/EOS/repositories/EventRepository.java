@@ -96,6 +96,21 @@ public class EventRepository {
         }
         return categoryList;
     }
+    public List<Event> searchEventsByTitle(String text) throws SQLException {
+        List<Event> eventList = new ArrayList<>();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        PreparedStatement ps = Connect.SQLConnection("SELECT * FROM events WHERE title LIKE ?");
+        ps.setString(1, "%" + text + "%");
+        ResultSet rs = ps.executeQuery();
+        while(rs.next()){
+            Event event = new Event(rs.getInt("id"), rs.getString("title"), rs.getString("description"),
+                    rs.getDouble("price"), rs.getString("category"),
+                    LocalDateTime.parse(rs.getString("date_and_time"), formatter),
+                    rs.getString("place"), rs.getString("image_url"));
+            eventList.add(event);
+        }
+        return eventList;
+    }
 
 
 }

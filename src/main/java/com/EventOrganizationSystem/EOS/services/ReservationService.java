@@ -6,7 +6,6 @@ import com.EventOrganizationSystem.EOS.repositories.ReservationRepository;
 import com.EventOrganizationSystem.EOS.utils.JwtDecoder;
 import io.jsonwebtoken.Claims;
 
-import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
@@ -29,6 +28,15 @@ public class ReservationService {
         Claims claims = JwtDecoder.decodeJwt(token);
         int userId = claims.get("UserId", Integer.class);
         return rr.getReservationsByUserId(userId);
+    }
+    public void addSessionId(String chargeId, int userId, int eventId) throws SQLException {
+        rr.addChargeId(chargeId, userId, eventId);
+    }
+    public String getSessionId(int userId, int eventId) throws SQLException {
+        return rr.getChargeId(userId, eventId);
+    }
+    public void deleteReservation(int userId, int eventId) throws SQLException {
+        rr.deleteReservation(userId, eventId);
     }
 
 }

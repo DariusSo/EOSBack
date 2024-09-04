@@ -67,5 +67,29 @@ public class ReservationRepository {
         }
         return eventList;
     }
+    public void addChargeId(String sessionId, int userId, int eventId) throws SQLException {
+        PreparedStatement ps = Connect.SQLConnection("UPDATE reservations SET charge_id = ? WHERE user_id = ? AND event_id = ?");
+        ps.setString(1, sessionId);
+        ps.setInt(2, userId);
+        ps.setInt(3, eventId);
+        ps.execute();
+    }
+    public String getChargeId(int userId, int eventId) throws SQLException {
+        PreparedStatement ps = Connect.SQLConnection("SELECT * FROM reservations WHERE user_id = ? AND event_id = ?");
+        ps.setInt(1, userId);
+        ps.setInt(2, eventId);
+        ResultSet rs = ps.executeQuery();
+        String sessionId = "";
+        if(rs.next()){
+            sessionId = rs.getString("charge_id");
+        }
+        return sessionId;
+    }
+    public void deleteReservation(int userId, int eventId) throws SQLException {
+        PreparedStatement ps = Connect.SQLConnection("DELETE FROM reservations WHERE user_id = ? AND event_id = ?");
+        ps.setInt(1, userId);
+        ps.setInt(2, eventId);
+        ps.execute();
+    }
 
 }
