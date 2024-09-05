@@ -1,5 +1,6 @@
 package com.EventOrganizationSystem.EOS.services;
 
+import com.EventOrganizationSystem.EOS.models.Event;
 import com.EventOrganizationSystem.EOS.models.Reservation;
 import com.EventOrganizationSystem.EOS.repositories.ReservationRepository;
 import com.EventOrganizationSystem.EOS.utils.JwtDecoder;
@@ -12,6 +13,7 @@ import com.sendgrid.helpers.mail.objects.Content;
 import com.sendgrid.helpers.mail.objects.Email;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
+import com.stripe.model.Charge;
 import com.stripe.model.PaymentIntent;
 import com.stripe.model.Refund;
 import com.stripe.model.checkout.Session;
@@ -28,6 +30,10 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.UUID;
 
 
@@ -36,6 +42,7 @@ public class StripeService {
 
     ReservationService rs = new ReservationService();
     ReservationRepository rr = new ReservationRepository();
+    EventService es = new EventService();
 
     @Value("${stripe.api.key}")
     private String stripeApiKey;
@@ -99,7 +106,7 @@ public class StripeService {
         rs.addSessionId(session.getId(), userId, eventId);
         return session;
     }
-    public Refund createRefund(String token, int eventId) throws SQLException, StripeException {
+    public void createRefund(String token, int eventId) throws SQLException, StripeException {
 
         Stripe.apiKey = "sk_test_51PlEGq2KAAK191iLBzP39TlQrdJc52LgmEg8axaHojCGK5KZbMPylEJWoYiJ0MP3jrwexCzBDwgHVOCwAfWYVEQD00Z6gOC4wD";
 
@@ -109,16 +116,47 @@ public class StripeService {
 
         Session session = Session.retrieve(sessionId);
         PaymentIntent paymentIntent = PaymentIntent.retrieve(session.getPaymentIntent());
+        double chargeAmount = getChargePrice(token, eventId);
 
-        RefundCreateParams params =
-                RefundCreateParams.builder().setCharge(paymentIntent.getLatestCharge()).build();
-        try {
+            Charge charge = Charge.retrieve(paymentIntent.getLatestCharge());
+
+        if(chargeAmount == 0){
+            rs.deleteReservation(userId, eventId);
+        }else {
+            RefundCreateParams params =
+                    RefundCreateParams.builder().setCharge(String.valueOf(charge.getId())).setAmount((long) chargeAmount * 100).build();
+
             Refund refund = Refund.create(params);
             rs.deleteReservation(userId, eventId);
-            return refund;
-        } catch (StripeException e) {
-            throw new RuntimeException(e);
         }
+
+    }
+    public double getChargePrice(String token, int eventId) throws SQLException, StripeException {
+        Claims claims = JwtDecoder.decodeJwt(token);
+        int userId = claims.get("UserId", Integer.class);
+
+        LocalDateTime today = LocalDateTime.now();
+        int refund100 = es.getRefundDays100(eventId);
+        boolean refund24 = es.getRefundDays24(eventId);
+        LocalDateTime eventDate = es.getEventById(eventId).getDateAndTime();
+
+        String sessionId =  rs.getSessionId(userId, eventId);
+
+        Session session = Session.retrieve(sessionId);
+        PaymentIntent paymentIntent = PaymentIntent.retrieve(session.getPaymentIntent());
+        Charge charge = Charge.retrieve(paymentIntent.getLatestCharge());
+
+        if(Duration.between(today, eventDate).toDays() >= refund100){
+            return charge.getAmount() / 100.00;
+        }
+        if(Duration.between(today, eventDate).toHours() < 24 && refund24){
+            return 0;
+        }
+        if(Duration.between(today, eventDate).toDays() < refund100){
+            return (charge.getAmount() / 2.00) / 100.00;
+        }
+
+        return charge.getAmount() / 100.00;
     }
 
 

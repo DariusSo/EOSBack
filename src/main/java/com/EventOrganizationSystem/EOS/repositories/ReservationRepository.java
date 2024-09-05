@@ -62,7 +62,7 @@ public class ReservationRepository {
         ps.setInt(1, id);
         ResultSet rs = ps.executeQuery();
         while(rs.next()){
-            Event event = er.getEventById(rs.getInt("user_id"));
+            Event event = er.getEventById(rs.getInt("event_id"));
             eventList.add(event);
         }
         return eventList;

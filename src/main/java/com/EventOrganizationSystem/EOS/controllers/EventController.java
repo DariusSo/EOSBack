@@ -19,9 +19,9 @@ public class EventController {
 
     @CrossOrigin
     @PostMapping("/add")
-    public ResponseEntity<String> addEvent(@RequestBody Event event) throws SQLException {
+    public ResponseEntity<String> addEvent(@RequestBody Event event, int refund100, boolean refund24 ) throws SQLException {
         try{
-            es.addEvent(event);
+            es.addEvent(event, refund100, refund24);
             return ResponseEntity.ok("Event added");
         }catch (SQLException e){
             return ResponseEntity.badRequest().body("Check if your parameters are good");
@@ -81,5 +81,13 @@ public class EventController {
         }catch (SQLException e){
             return ResponseEntity.internalServerError().body(eventList);
         }
+    }
+    @CrossOrigin
+    @GetMapping("/checkDate")
+    public boolean checkDateForReview(int eventId) throws SQLException {
+
+            return es.checkDateForReview(eventId);
+
+
     }
 }

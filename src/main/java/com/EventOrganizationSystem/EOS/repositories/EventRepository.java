@@ -17,8 +17,8 @@ import java.util.UUID;
 
 public class EventRepository {
 
-    public void addEvent(Event event) throws SQLException {
-        PreparedStatement pr = Connect.SQLConnection("INSERT INTO events (title,description,price,category,date_and_time,place, image_url) VALUES (?,?,?,?,?,?,?)");
+    public void addEvent(Event event, int refund100, boolean refund24) throws SQLException {
+        PreparedStatement pr = Connect.SQLConnection("INSERT INTO events (title,description,price,category,date_and_time,place, image_url, refund_100, refund_24) VALUES (?,?,?,?,?,?,?,?,?,?)");
         pr.setString(1, event.getTitle());
         pr.setString(2, event.getDescription());
         pr.setDouble(3, event.getPrice());
@@ -26,6 +26,8 @@ public class EventRepository {
         pr.setString(5, String.valueOf(LocalDateTime.now()));
         pr.setString(6, event.getPlace());
         pr.setString(7, event.getImageUrl());
+        pr.setInt(8, refund100);
+        pr.setBoolean(9, refund24);
         pr.execute();
     }
     public List<Event> getEvents() throws SQLException {
@@ -111,6 +113,25 @@ public class EventRepository {
         }
         return eventList;
     }
+    public int getRefundDays100(int eventId) throws SQLException {
+        PreparedStatement ps = Connect.SQLConnection("SELECT * FROM events WHERE id = ?");
+        ps.setInt(1, eventId);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()){
+            return rs.getInt("refund_100");
+        }
+        return -1;
+    }
+    public boolean getRefundDays24(int eventId) throws SQLException {
+        PreparedStatement ps = Connect.SQLConnection("SELECT * FROM events WHERE id = ?");
+        ps.setInt(1, eventId);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()){
+            return rs.getBoolean("refund_24");
+        }
+        return false;
+    }
+
 
 
 }

@@ -46,10 +46,26 @@ public class StripeController {
     @CrossOrigin
     @PostMapping("/createRefund")
     public ResponseEntity<Map<String, String>> createRefund(@RequestHeader("Authorization") String token, int eventId) throws SQLException, StripeException {
+        try{
+            sr.createRefund(token, eventId);
+            Map<String, String> responseData = new HashMap<>();
+            return ResponseEntity.ok(responseData);
+        }catch (StripeException e){
+            return ResponseEntity.badRequest().build();
+        }
 
-        Refund refund = sr.createRefund(token, eventId);
-        Map<String, String> responseData = new HashMap<>();
-        return ResponseEntity.ok(responseData);
+    }
+
+    @CrossOrigin
+    @GetMapping("/getChargeAmount")
+    public ResponseEntity<Double> getChargeAmount(@RequestHeader("Authorization") String token, int eventId){
+        try{
+            return ResponseEntity.ok(sr.getChargePrice(token, eventId));
+        } catch (StripeException e) {
+            return ResponseEntity.noContent().build();
+        } catch (SQLException e) {
+            return ResponseEntity.internalServerError().body(0.00);
+        }
     }
 
     @GetMapping("/redirect")
@@ -61,5 +77,6 @@ public class StripeController {
                 new RedirectView("http://localhost:5173/"): // status update successful
                 new RedirectView("http://localhost:7777/errorPaying.html"); // status update failed
     }
+
 
 }
