@@ -31,5 +31,30 @@ public class ReservationController {
             return  new ResponseEntity<List<Event>>(HttpStatus.UNAUTHORIZED);
         }
     }
+    @CrossOrigin
+    @GetMapping("/attended")
+    public ResponseEntity<List<Event>> getReservationsByUserIdAttended(@RequestHeader("Authorization") String token) throws SQLException {
+        try{
+            List<Event> eventList = rs.getReservationsByUserIdAttended(token);
+            return ResponseEntity.ok(eventList);
+        }catch (SQLException e){
+            return ResponseEntity.internalServerError().body(null);
+        }catch (JwtException e){
+            return  new ResponseEntity<List<Event>>(HttpStatus.UNAUTHORIZED);
+        }
+
+    }
+    @CrossOrigin
+    @GetMapping("/notAttendedYet")
+    public ResponseEntity<List<Event>> getReservationsByUserIdNotAttendedYet(@RequestHeader("Authorization") String token) throws SQLException {
+        try{
+            List<Event> eventList = rs.getReservationsByUserIdNotAttendedYet(token);
+            return ResponseEntity.ok(eventList);
+        }catch (SQLException e){
+            return ResponseEntity.internalServerError().body(null);
+        }catch (JwtException e){
+            return  new ResponseEntity<List<Event>>(HttpStatus.UNAUTHORIZED);
+        }
+    }
 
 }

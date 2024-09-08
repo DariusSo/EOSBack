@@ -5,12 +5,16 @@ public class Review {
     private int user_id;
     private int event_id;
     private String review;
+    private int rating;
+    private String username;
 
-    public Review(int id, int user_id, int event_id, String review) {
+    public Review(int id, int user_id, int event_id, String review, int rating, String username) {
         this.id = id;
         this.user_id = user_id;
         this.event_id = event_id;
         this.review = review;
+        this.rating = rating;
+        this.username = username;
     }
 
     public Review() {
@@ -46,5 +50,21 @@ public class Review {
 
     public void setReview(String review) {
         this.review = review;
+    }
+
+    public int getRating() {
+        return rating;
+    }
+
+    public void setRating(int rating) {
+        this.rating = rating;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 }

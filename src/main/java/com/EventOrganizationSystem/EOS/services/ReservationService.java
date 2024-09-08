@@ -38,5 +38,15 @@ public class ReservationService {
     public void deleteReservation(int userId, int eventId) throws SQLException {
         rr.deleteReservation(userId, eventId);
     }
+    public List<Event> getReservationsByUserIdAttended(String token) throws SQLException {
+        Claims claims = JwtDecoder.decodeJwt(token);
+        int userId = claims.get("UserId", Integer.class);
+        return rr.getReservationsByUserIdAttended(userId);
+    }
+    public List<Event> getReservationsByUserIdNotAttendedYet(String token) throws SQLException {
+        Claims claims = JwtDecoder.decodeJwt(token);
+        int userId = claims.get("UserId", Integer.class);
+        return rr.getReservationsByUserIdNotAttendedYet(userId);
+    }
 
 }

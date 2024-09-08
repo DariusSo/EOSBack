@@ -91,5 +91,34 @@ public class ReservationRepository {
         ps.setInt(2, eventId);
         ps.execute();
     }
+    public List<Event> getReservationsByUserIdAttended(int id) throws SQLException {
+        List<Event> eventList = new ArrayList<>();
+        PreparedStatement ps = Connect.SQLConnection("SELECT * FROM reservations where user_id = ?");
+        ps.setInt(1, id);
+        ResultSet rs = ps.executeQuery();
+        while(rs.next()){
+            LocalDateTime eventDate = er.getEventById(rs.getInt("event_id")).getDateAndTime();
+            if(eventDate.isBefore(LocalDateTime.now())){
+                Event event = er.getEventById(rs.getInt("event_id"));
+                eventList.add(event);
+            }
+        }
+        return eventList;
+    }
+    public List<Event> getReservationsByUserIdNotAttendedYet(int id) throws SQLException {
+        List<Event> eventList = new ArrayList<>();
+        PreparedStatement ps = Connect.SQLConnection("SELECT * FROM reservations where user_id = ?");
+        ps.setInt(1, id);
+        ResultSet rs = ps.executeQuery();
+        while(rs.next()){
+            LocalDateTime eventDate = er.getEventById(rs.getInt("event_id")).getDateAndTime();
+            if(eventDate.isAfter(LocalDateTime.now())){
+                Event event = er.getEventById(rs.getInt("event_id"));
+                eventList.add(event);
+            }
+
+        }
+        return eventList;
+    }
 
 }
