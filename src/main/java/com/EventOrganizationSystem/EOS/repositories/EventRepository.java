@@ -18,7 +18,7 @@ import java.util.UUID;
 public class EventRepository {
 
     public void addEvent(Event event, int refund100, boolean refund24) throws SQLException {
-        PreparedStatement pr = Connect.SQLConnection("INSERT INTO events (title,description,price,category,date_and_time,place, image_url, refund_100, refund_24) VALUES (?,?,?,?,?,?,?,?,?,?)");
+        PreparedStatement pr = Connect.SQLConnection("INSERT INTO events (title,description,price,category,date_and_time,place, image_url, refund_100, refund_24) VALUES (?,?,?,?,?,?,?,?,?)");
         pr.setString(1, event.getTitle());
         pr.setString(2, event.getDescription());
         pr.setDouble(3, event.getPrice());

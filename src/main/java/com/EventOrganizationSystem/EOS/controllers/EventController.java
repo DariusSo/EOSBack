@@ -24,6 +24,7 @@ public class EventController {
             es.addEvent(event, refund100, refund24);
             return ResponseEntity.ok("Event added");
         }catch (SQLException e){
+            e.printStackTrace();
             return ResponseEntity.badRequest().body("Check if your parameters are good");
         }
     }
